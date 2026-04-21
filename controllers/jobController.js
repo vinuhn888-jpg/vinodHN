@@ -2,7 +2,7 @@ const Job = require('../models/Jobs');
 const Register = require('../models/Register');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const mongoose = require("mongoose");
 
 
 
@@ -10,7 +10,11 @@ exports.createJob = async (req, res) => {
     try {
         const { company, role, status, applyDate, platform, followUpDate, package, location } = req.body;
 
-        const userId = req.user.id; // ✅ from token
+
+
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+
+        console.log({ userId })
 
         if (!company || !role) {
             return res.status(400).json({ message: "Please add all fields" });
@@ -181,9 +185,10 @@ exports.login = async (req, res) => {
 exports.updateJob = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(id)
         const userId = req.user.id;
 
-        const job = await Job.findOne({ jobId: id }); // ✅ ensure it belongs to this user
+        const job = await Job.findOne({ _id: id }); // ✅ ensure it belongs to this user
 
         if (!job) {
             return res.status(404).json({ message: "Job not found" });
