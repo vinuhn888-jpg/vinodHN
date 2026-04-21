@@ -10,7 +10,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/jobs", require("./routes/jobroutes"));
+app.use("/api/jobs", require("./routes/jobRoutes"));
 
 app.get('/', (req, res) => {
     res.send('API is running...');
