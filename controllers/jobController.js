@@ -77,37 +77,46 @@ exports.deleteJob = async (req, res) => {
 
 
 exports.register = async (req, res) => {
+    try {
+        const { username, password, firstName, lastName, dob, mobileNumber } = req.body;
 
-    const { username, password, firstName, lastName, dob, mobileNumber } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({
+                message: "Username and password are required"
+            });
+        }
 
-    const existingUsername = await Register.findOne({ username });
+        const existingUsername = await Register.findOne({ username });
 
-    if (existingUsername) {
+        if (existingUsername) {
+            return res.status(400).json({
+                message: "User already exists"
+            });
+        }
 
-        res.status(400).json({
-            status: 400,
-            message: "User already  exists"
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await Register.create({
+            username,
+            password: hashedPassword,
+            firstName,
+            lastName,
+            dob,
+            mobileNumber
         });
-        return
+
+        return res.status(201).json({
+            message: "User registered successfully",
+            data: user
+        });
+
+    } catch (error) {
+        console.error("Register Error:", error); // 🔥 VERY IMPORTANT
+
+        return res.status(500).json({
+            message: error.message
+        });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await Register.create({
-        username,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        dob,
-        mobileNumber
-    });
-
-    res.status(201).json({
-        status: 201,
-        message: "User registered successfully",
-        data: user
-    });
-
 };
 
 exports.login = async (req, res) => {
