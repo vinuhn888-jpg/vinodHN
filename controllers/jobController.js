@@ -183,7 +183,7 @@ exports.updateJob = async (req, res) => {
         const { id } = req.params;
         const userId = req.user.id;
 
-        const job = await Job.findOne({ _id: id, userId }); // ✅ ensure it belongs to this user
+        const job = await Job.findOne({ jobId: id }); // ✅ ensure it belongs to this user
 
         if (!job) {
             return res.status(404).json({ message: "Job not found" });
